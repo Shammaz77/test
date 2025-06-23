@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Community Members</title>
+    <style>
+         <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f5f7fa;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+      }
+
+      .card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+        transition: transform 0.2s;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+      }
+
+      .form-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      input, select {
+        padding: 12px;
+        border: 1px solid #dfe6e9;
+        border-radius: 8px;
+        font-size: 1rem;
+        flex: 1;
+        min-width: 200px;
+        transition: border-color 0.3s;
+      }
+
+      input:focus, select:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+      }
+
+      button {
+        padding: 12px 24px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      button:hover {
+        background-color: #2980b9;
+        transform: translateY(-2px);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      th, td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #dfe6e9;
+      }
+
+      th {
+        background-color: #3498db;
+        color: white;
+        font-weight: 600;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      tr:hover {
+        background-color: #f1f3f5;
+      }
+
+      .delete-btn {
+        background-color: #e74c3c;
+      }
+
+      .delete-btn:hover {
+        background-color: #c0392b;
+      }
+
+      .spending-section {
+        margin-top: 40px;
+      }
+
+      @media (max-width: 768px) {
+        .form-group {
+          flex-direction: column;
+        }
+
+        input, select {
+          min-width: 100%;
+        }
+
+        button {
+          width: 100%;
+        }
+
+        th, td {
+          padding: 10px;
+          font-size: 0.9rem;
+        }
+      }
+    </style>
+    </style>
+  </head>
+  <body>
+    <h2>Add Member</h2>
+    <input type="text" id="name" placeholder="Member Name" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <button onclick="addMember()">Add Member</button>
+
+    <table id="memberTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Joined At</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="members"></tbody>
+    </table>
+
+    <div class="spending-section">
+      <h2>Add Spending Record</h2>
+      <select id="memberSelect" required>
+        <option value="">Select Member</option>
+      </select>
+      <input type="number" id="amount" placeholder="Amount" step="0.01" min="0" required />
+      <input type="text" id="description" placeholder="Description" required />
+      <input type="date" id="spendingDate" required />
+      <button onclick="addSpending()">Add Spending</button>
+
+      <h3>Spending History</h3>
+      <table id="spendingTable">
+        <thead>
+          <tr>
+            <th>Member</th>
+            <th>Amount</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="spendingHistory"></tbody>
+      </table>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        getDocs,
+        deleteDoc,
+        doc,
+        serverTimestamp,
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyC2mQazaLbD4PL_3vQJPMHG-T0eTgGT0m0",
+        authDomain: "for-test-project-6ec0b.firebaseapp.com",
+        projectId: "for-test-project-6ec0b",
+        storageBucket: "for-test-project-6ec0b.firebasestorage.app",
+        messagingSenderId: "524479673726",
+        appId: "1:524479673726:web:7b47d061cea1955ac7af2f",
+        measurementId: "G-34N22TZZGS"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const communityId = "defaultCommunity";
+      const membersRef = collection(db, "communities", communityId, "members");
+      const spendingRef = collection(db, "communities", communityId, "spending");
+
+      window.addMember = async function() {
+        try {
+          const name = document.getElementById("name").value.trim();
+          const email = document.getElementById("email").value.trim();
+          
+          if (!name || !email) {
+            alert("Name and Email are required.");
+            return;
+          }
+
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            alert("Please enter a valid email address.");
+            return;
+          }
+
+          await addDoc(membersRef, {
+            name,
+            email,
+            joinedAt: serverTimestamp()
+          });
+
+          document.getElementById("name").value = '';
+          document.getElementById("email").value = '';
+
+          setTimeout(() => {
+            loadMembers();
+            loadMemberSelect();
+          }, 500);
+          
+        } catch (error) {
+          console.error("Error adding member:", error);
+          alert("Error adding member. Please try again.");
+        }
+      };
+
+      window.deleteMember = async function(id) {
+        try {
+          if (confirm("Are you sure you want to delete this member?")) {
+            await deleteDoc(doc(db, "communities", communityId, "members", id));
+            loadMembers();
+            loadMemberSelect();
+            loadSpendingHistory();
+          }
+        } catch (error) {
+          console.error("Error deleting member:", error);
+          alert("Error deleting member. Please try again.");
+        }
+      };
+
+      window.addSpending = async function() {
+        try {
+          const memberId = document.getElementById("memberSelect").value;
+          const amount = parseFloat(document.getElementById("amount").value);
+          const description = document.getElementById("description").value.trim();
+          const spendingDate = document.getElementById("spendingDate").value;
+
+          if (!memberId || !amount || !description || !spendingDate) {
+            alert("All fields are required.");
+            return;
+          }
+
+          if (amount <= 0) {
+            alert("Amount must be greater than 0.");
+            return;
+          }
+
+          await addDoc(spendingRef, {
+            memberId,
+            amount,
+            description,
+            spendingDate: new Date(spendingDate),
+            createdAt: serverTimestamp()
+          });
+
+          document.getElementById("amount").value = '';
+          document.getElementById("description").value = '';
+          document.getElementById("spendingDate").value = '';
+
+          setTimeout(loadSpendingHistory, 500);
+          
+        } catch (error) {
+          console.error("Error adding spending record:", error);
+          alert("Error adding spending record. Please try again.");
+        }
+      };
+
+      window.deleteSpending = async function(id) {
+        try {
+          if (confirm("Are you sure you want to delete this spending record?")) {
+            await deleteDoc(doc(db, "communities", communityId, "spending", id));
+            loadSpendingHistory();
+          }
+        } catch (error) {
+          console.error("Error deleting spending record:", error);
+          alert("Error deleting spending record. Please try again.");
+        }
+      };
+
+      async function loadMembers() {
+        try {
+          const snapshot = await getDocs(membersRef);
+          const table = document.getElementById("members");
+          table.innerHTML = "";
+
+          if (snapshot.empty) {
+            table.innerHTML = '<tr><td colspan="4" style="text-align: center;">No members yet</td></tr>';
+            return;
+          }
+
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const joinedDate = data.joinedAt ? data.joinedAt.toDate().toLocaleString() : "Just now";
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${escapeHtml(data.name)}</td>
+              <td>${escapeHtml(data.email)}</td>
+              <td>${joinedDate}</td>
+              <td><button onclick="deleteMember('${docSnap.id}')">Delete</button></td>
+            `;
+            table.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error loading members:", error);
+          const table = document.getElementById("members");
+          table.innerHTML = '<tr><td colspan="4" style="text-align: center; color: red;">Error loading members</td></tr>';
+        }
+      }
+
+      async function loadMemberSelect() {
+        try {
+          const snapshot = await getDocs(membersRef);
+          const select = document.getElementById("memberSelect");
+          select.innerHTML = '<option value="">Select Member</option>';
+
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const option = document.createElement('option');
+            option.value = docSnap.id;
+            option.textContent = data.name;
+            select.appendChild(option);
+          });
+        } catch (error) {
+          console.error("Error loading member select:", error);
+        }
+      }
+
+      async function loadSpendingHistory() {
+        try {
+          const snapshot = await getDocs(spendingRef);
+          const table = document.getElementById("spendingHistory");
+          table.innerHTML = "";
+
+          if (snapshot.empty) {
+            table.innerHTML = '<tr><td colspan="5" style="text-align: center;">No spending records yet</td></tr>';
+            return;
+          }
+
+          // Get member names for display
+          const membersSnapshot = await getDocs(membersRef);
+          const members = {};
+          membersSnapshot.forEach(doc => {
+            members[doc.id] = doc.data().name;
+          });
+
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const spendingDate = data.spendingDate ? new Date(data.spendingDate).toLocaleDateString() : "N/A";
+            const memberName = members[data.memberId] || "Unknown Member";
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td>${escapeHtml(memberName)}</td>
+              <td>$${parseFloat(data.amount).toFixed(2)}</td>
+              <td>${escapeHtml(data.description)}</td>
+              <td>${spendingDate}</td>
+              <td><button onclick="deleteSpending('${docSnap.id}')">Delete</button></td>
+            `;
+            table.appendChild(row);
+          });
+        } catch (error) {
+          console.error("Error loading spending history:", error);
+          const table = document.getElementById("spendingHistory");
+          table.innerHTML = '<tr><td colspan="5" style="text-align: center; color: red;">Error loading spending history</td></tr>';
+        }
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+        loadMembers();
+        loadMemberSelect();
+        loadSpendingHistory();
+      });
+    </script>
+  </body>
+</html>
