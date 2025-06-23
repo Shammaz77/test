@@ -1,0 +1,10 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Doe;John
+FN:John Doe
+ORG:My Company
+TITLE:Web Developer
+TEL;TYPE=CELL:+1234567890
+EMAIL:john.doe@example.com
+URL:https://johndoe.dev
+END:VCARD

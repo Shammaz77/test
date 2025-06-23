@@ -25,9 +25,7 @@
   </style>
 </head>
 <body>
-
   <h2>Scan or Download My Contact</h2>
-  
   <div id="qrcode"></div>
   <br>
   <button class="button" onclick="downloadVCard()">Download Contact</button>
@@ -56,10 +54,12 @@ TEL;TYPE=CELL:${contact.phone}
 EMAIL:${contact.email}
 URL:${contact.website}
 END:VCARD
-    `.trim();
+`.trim();
 
-    // Generate QR Code pointing to downloadable .vcf file (optional)
-    QRCode.toDataURL('data:text/vcard;charset=utf-8,' + encodeURIComponent(vCardData), function (err, url) {
+    // ✅ Use hosted .vcf file for QR
+    const vcfFileURL = "https://shammaz77.github.io/test/john_doe.vcf";
+
+    QRCode.toDataURL(vcfFileURL, function (err, url) {
       if (err) console.error(err);
       const img = document.createElement('img');
       img.src = url;
@@ -68,7 +68,7 @@ END:VCARD
       document.getElementById('qrcode').appendChild(img);
     });
 
-    // Trigger vCard Download
+    // ✅ Still allow download
     function downloadVCard() {
       const blob = new Blob([vCardData], { type: 'text/vcard' });
       const url = URL.createObjectURL(blob);
@@ -79,18 +79,5 @@ END:VCARD
       URL.revokeObjectURL(url);
     }
   </script>
-<script>
-  const vcfURL = "https://shammaz77.github.io/test/test.html/contact.vcf"; // Replace with your URL
-
-  QRCode.toDataURL(vcfURL, function (err, url) {
-    if (err) console.error(err);
-    const img = document.createElement('img');
-    img.src = url;
-    img.alt = "Scan to Save Contact";
-    img.style.width = '200px';
-    document.getElementById('qrcode').appendChild(img);
-  });
-</script>
-
 </body>
 </html>
