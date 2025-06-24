@@ -33,13 +33,20 @@
   <script>
     // Contact Info
     const contact = {
-      firstName: "John",
-      lastName: "Doe",
-      phone: "+1234567890",
-      email: "john.doe@example.com",
+      firstName: "Sony",
+      lastName: "Mathews",
+      phone: "+917012923410",
+      email: "sony.mathews@elevare-solution.com",
       company: "My Company",
-      title: "Web Developer",
-      website: "https://johndoe.dev"
+      title: "CEO & Managing Director",
+      website: "https://johndoe.dev",
+        address: {
+        street: "Dotspace, Kenz Avenue Attipra, Kazhakootam",
+        city: "Thiiruvanathapuram",
+        state: "Kerala",
+        postalCode: "695582",
+        country: "India"
+      }
     };
 
     // Create vCard string
@@ -53,6 +60,8 @@ TITLE:${contact.title}
 TEL;TYPE=CELL:${contact.phone}
 EMAIL:${contact.email}
 URL:${contact.website}
+ADR;TYPE=WORK:;;${contact.address.street};${contact.address.city};${contact.address.state};${contact.address.postalCode};${contact.address.country}
+
 END:VCARD
 `.trim();
 
