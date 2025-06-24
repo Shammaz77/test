@@ -1,56 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Digital Business Card</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 30px;
-    }
-    #qrcode {
-      margin: 20px auto;
-    }
-    .button {
-      padding: 10px 20px;
-      background-color: #0077cc;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <h2>Scan or Download My Contact</h2>
-  <div id="qrcode"></div>
-  <br>
-  <button class="button" onclick="downloadVCard()">Download Contact</button>
-
-  <script>
-    // Contact Info
-    const contact = {
-      firstName: "Sony",
-      lastName: "Mathews",
-      phone: "+917012923410",
-      email: "sony.mathews@elevare-solution.com",
-      company: "My Company",
-      title: "CEO & Managing Director",
-      website: "https://johndoe.dev",
-        address: {
-        street: "Dotspace, Kenz Avenue Attipra, Kazhakootam",
-        city: "Thiiruvanathapuram",
-        state: "Kerala",
-        postalCode: "695582",
-        country: "India"
+  <head>
+    <meta charset="UTF-8" />
+    <title>Digital Business Card</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding: 30px;
       }
-    };
+      #qrcode {
+        margin: 20px auto;
+      }
+      .button {
+        padding: 10px 20px;
+        background-color: #0077cc;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Scan or Download My Contact</h2>
+    <div id="qrcode"></div>
+    <br />
+    <button class="button" onclick="downloadVCard()">Download Contact</button>
 
-    // Create vCard string
-    const vCardData = `
+    <script>
+      // Contact Info
+      const contact = {
+        firstName: "Sony",
+        lastName: "Mathews",
+        phone: "+917012923410",
+        email: "sony.mathews@elevare-solution.com",
+        company: "My Company",
+        title: "CEO & Managing Director",
+        website: "https://johndoe.dev",
+        address: {
+          street: "Dotspace, Kenz Avenue Attipra, Kazhakootam",
+          city: "Thiiruvanathapuram",
+          state: "Kerala",
+          postalCode: "695582",
+          country: "India",
+        },
+      };
+
+      // Create vCard string
+      const vCardData = `
 BEGIN:VCARD
 VERSION:3.0
 N:${contact.lastName};${contact.firstName}
@@ -65,28 +65,28 @@ ADR;TYPE=WORK:;;${contact.address.street};${contact.address.city};${contact.addr
 END:VCARD
 `.trim();
 
-    // ✅ Use hosted .vcf file for QR
-    const vcfFileURL = "https://shammaz77.github.io/test/john_doe.vcf";
+      // ✅ Use hosted .vcf file for QR
+      const vcfFileURL = "https://shammaz77.github.io/test/john_doe.vcf";
 
-    QRCode.toDataURL(vcfFileURL, function (err, url) {
-      if (err) console.error(err);
-      const img = document.createElement('img');
-      img.src = url;
-      img.alt = "Scan QR to Save Contact";
-      img.style.width = '200px';
-      document.getElementById('qrcode').appendChild(img);
-    });
+      QRCode.toDataURL(vcfFileURL, function (err, url) {
+        if (err) console.error(err);
+        const img = document.createElement("img");
+        img.src = url;
+        img.alt = "Scan QR to Save Contact";
+        img.style.width = "200px";
+        document.getElementById("qrcode").appendChild(img);
+      });
 
-    // ✅ Still allow download
-    function downloadVCard() {
-      const blob = new Blob([vCardData], { type: 'text/vcard' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${contact.firstName}_${contact.lastName}.vcf`;
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-  </script>
-</body>
+      // ✅ Still allow download
+      function downloadVCard() {
+        const blob = new Blob([vCardData], { type: "text/vcard" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${contact.firstName}_${contact.lastName}.vcf`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    </script>
+  </body>
 </html>
