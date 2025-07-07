@@ -1,11 +1,10 @@
 BEGIN:VCARD
 VERSION:3.0
-N:Doe;Sony
+N:Mathews;Sony
 FN:Sony Mathews
 ORG:TIG
 TITLE:CEO & Managing Director
 TEL;TYPE=CELL:+917012923410
 EMAIL:sony.mathews@elevare-solution.com
-URL:https://sony.com
 ADR;TYPE=WORK:;;Dotspace, Kenz Avenue Attipra, Kazhakootam;Thiruvananthapuram;Kerala;695582;India
 END:VCARD

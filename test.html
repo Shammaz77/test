@@ -1,92 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Digital Business Card</title>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact QR Code</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        padding: 30px;
-      }
-      #qrcode {
-        margin: 20px auto;
-      }
-      .button {
-        padding: 10px 20px;
-        background-color: #0077cc;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-      }
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .qr-code {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        .qr-code img {
+            max-width: 200px;
+            height: auto;
+            border-radius: 8px;
+        }
+        .download-btn {
+            display: inline-block;
+            padding: 0.8rem 1.5rem;
+            background: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        .download-btn:hover {
+            background: #0056b3;
+        }
     </style>
-  </head>
-  <body>
-    <h2>Scan or Download My Contact</h2>
-    <div id="qrcode"></div>
-    <br />
-    <button class="button" onclick="downloadVCard()">Download Contact</button>
-
-    <script>
-      // Contact Info
-      const contact = {
-        firstName: "Sony",
-        lastName: "Mathews",
-        phone: "+917012923410",
-        email: "sony.mathews@elevare-solution.com",
-        company: "My Company",
-        title: "CEO & Managing Director",
-        website: "https://johndoe.dev",
-        address: {
-          street: "Dotspace, Kenz Avenue Attipra, Kazhakootam",
-          city: "Thiiruvanathapuram",
-          state: "Kerala",
-          postalCode: "695582",
-          country: "India",
-        },
-      };
-
-      // Create vCard string
-      const vCardData = `
-BEGIN:VCARD
-VERSION:3.0
-N:${contact.lastName};${contact.firstName}
-FN:${contact.firstName} ${contact.lastName}
-ORG:${contact.company}
-TITLE:${contact.title}
-TEL;TYPE=CELL:${contact.phone}
-EMAIL:${contact.email}
-URL:${contact.website}
-ADR;TYPE=WORK:;;${contact.address.street};${contact.address.city};${contact.address.state};${contact.address.postalCode};${contact.address.country}
-
-END:VCARD
-`.trim();
-
-      // ✅ Use hosted .vcf file for QR
-      const vcfFileURL = "https://shammaz77.github.io/test/john_doe.vcf";
-
-      QRCode.toDataURL(vcfFileURL, function (err, url) {
-        if (err) console.error(err);
-        const img = document.createElement("img");
-        img.src = url;
-        img.alt = "Scan QR to Save Contact";
-        img.style.width = "200px";
-        document.getElementById("qrcode").appendChild(img);
-      });
-
-      // ✅ Still allow download
-      function downloadVCard() {
-        const blob = new Blob([vCardData], { type: "text/vcard" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${contact.firstName}_${contact.lastName}.vcf`;
-        a.click();
-        URL.revokeObjectURL(url);
-      }
-    </script>
-  </body>
+</head>
+<body>
+    <div class="container">
+        <h1>Scan or Download My Contact</h1>
+        <div class="qr-code">
+            <!-- Replace 'custom-qr-code.png' with the path to your styled QR code -->
+            <img src="./qr-code.png" alt="QR Code for Contact">
+        </div>
+        <a href="contact.vcf" class="download-btn">Download Contact</a>
+    </div>
+</body>
 </html>
